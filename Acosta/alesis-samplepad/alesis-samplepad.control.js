@@ -73,23 +73,19 @@ function rebuild_group(key_number){
 	}
 }
 
-function onMidi(status, data1, data2) {
-	debug_print_midi(status, data1, data2);
-	track_number = 0
-	slot_number = 0
+function onMidi(status, key_number, velocity) {
+	debug_print_midi(status, key_number, velocity);
 	if(status === 144){
-		coordinates = get_clip_coordinates (data1)
-		track_number = coordinates.track_number
-		slot_number = coordinates.slot_number
+		clip_coordinates = get_clip_coordinates (key_number)
 
-		if(note_already_used[data1]){
-			reset_group(data1)
-			debug_print("toogel off – key: "+data1+" – track_number: "+track_number+" – slot_number: "+ slot_number)
-			trackBank.getTrack (track_number).stop()
+		if(note_already_used[key_number]){
+			reset_group(key_number)
+			debug_print("toogel off – key: "+key_number+" – track_number: "+clip_coordinates.track_number+" – slot_number: "+ clip_coordinates.slot_number)
+			trackBank.getTrack (clip_coordinates.track_number).stop()
 		}else{
-			rebuild_group(data1)
-			debug_print("toogel on – key: "+data1+" – track_number: "+track_number+" – slot_number: "+ slot_number)
-			trackBank.getTrack(track_number).getClipLauncherSlots().launch(slot_number)
+			rebuild_group(key_number)
+			debug_print("toogel on – key: "+key_number+" – track_number: "+clip_coordinates.track_number+" – slot_number: "+ clip_coordinates.slot_number)
+			trackBank.getTrack(clip_coordinates.track_number).getClipLauncherSlots().launch(clip_coordinates.slot_number)
 		}
 	}
 }
